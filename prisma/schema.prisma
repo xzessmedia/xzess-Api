@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model files {
+  Id                 Int       @id @default(autoincrement())
+  UploadedAt         DateTime? @db.DateTime(0)
+  OriginalFilename   String    @db.VarChar(255)
+  EncodingInfo       String?   @db.VarChar(255)
+  MimeType           String?   @db.VarChar(255)
+  Size               Float?    @db.Float
+  StorageDestination String    @db.VarChar(255)
+  Filename           String    @db.VarChar(255)
+  Path               String    @db.VarChar(255)
+  Type               String    @default("ANY") @db.VarChar(255)
+  AdditionalData     String    @default("") @db.LongText
+}
+
+model requestlog {
+  Id            Int     @id @default(autoincrement())
+  RequestedAt   String? @db.VarChar(50)
+  AccessedRoute String? @db.VarChar(255)
+  User          String? @db.VarChar(150)
+  RemoteIP      String? @db.VarChar(35)
+  Token         String? @db.VarChar(255)
+  Payload       String? @db.LongText
+  ResponseTime  Float?  @db.Float
+
+  @@index([AccessedRoute], map: "AccessedRoute")
+  @@index([RemoteIP], map: "RemoteIP")
+  @@index([User], map: "User")
+}
+
+model logs {
+  Id         Int      @id @default(autoincrement())
+  LoggedAt   DateTime @db.DateTime(0)
+  Type       String   @db.VarChar(50)
+  Message    String   @default("") @db.VarChar(50)
+  Source     String?  @db.LongText
+  StoreId    Int?
+  CustomerId Int?
+}
+
+model setting {
+  Id           Int     @id @default(autoincrement())
+  SettingKey   String  @db.VarChar(512)
+  SettingValue String  @db.Text
+  ValueType    String  @db.VarChar(512)
+  IsActive     Boolean
+}

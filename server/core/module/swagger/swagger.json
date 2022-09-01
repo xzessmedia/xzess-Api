@@ -1,0 +1,268 @@
+{
+  "openapi": "3.0.1",
+  "servers": [
+    {
+      "url": "http://localhost:3500/"
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    },
+    {
+      "Development": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Core"
+    }
+  ],
+  "paths": {
+    "/api/v1/core/status": {
+      "get": {
+        "tags": [
+          "Core"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusMessage"
+                }
+              }
+            },
+            "description": "Responds with the current Api State",
+            "x-oad-type": "response"
+          }
+        },
+        "operationId": "Receive current Api Status",
+        "summary": "Get current status of Api",
+        "description": "Get Status of Api"
+      },
+      "x-oad-type": "operation"
+    },
+    "/api/v1/core/mail/": {
+      "post": {
+        "tags": [
+          "Core"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "to",
+                  "subject"
+                ],
+                "properties": {
+                  "from": {
+                    "description": "Sender Address",
+                    "type": "string"
+                  },
+                  "to": {
+                    "description": "Receiver Address",
+                    "type": "string"
+                  },
+                  "subject": {
+                    "description": "E-Mail Subject",
+                    "type": "string"
+                  },
+                  "html": {
+                    "description": "Html E-Mail Content",
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Send mail by Api",
+            "x-oad-type": "response"
+          }
+        },
+        "operationId": "Send mail by Api",
+        "summary": "Send mail by Api",
+        "description": "Send mail by Api"
+      },
+      "x-oad-type": "operation"
+    },
+    "/api/v1/files/id/{fileid}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "fileid",
+            "description": "The associated File Id to this request",
+            "schema": {
+              "type": "integer"
+            },
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "format": "binary"
+                }
+              }
+            },
+            "description": "Responds with the associated File",
+            "x-oad-type": "response"
+          }
+        },
+        "operationId": "Receive Specific File by id",
+        "summary": "Get a specific uploaded file",
+        "description": "Download Files with this Route"
+      },
+      "x-oad-type": "operation"
+    },
+    "/api/v1/files/name/{filename}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "filename",
+            "description": "The associated File Id to this request",
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "format": "binary"
+                }
+              }
+            },
+            "description": "Responds with the associated File",
+            "x-oad-type": "response"
+          }
+        },
+        "operationId": "Receive Specific File by originalfilename",
+        "summary": "Get a specific uploaded file",
+        "description": "Download Files with this Route"
+      },
+      "x-oad-type": "operation"
+    },
+    "/api/v1/files/": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "nullable": false,
+                    "format": "binary",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "filetype",
+            "schema": {
+              "nullable": false,
+              "enum": [
+                "MEDIA",
+                "DOCUMENT",
+                "IMAGE",
+                "VIDEO",
+                "ANY"
+              ],
+              "type": "string"
+            },
+            "in": "query"
+          },
+          {
+            "name": "additionaldata",
+            "schema": {
+              "type": "object"
+            },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Responds with status of success",
+            "x-oad-type": "response"
+          }
+        },
+        "operationId": "Transmit a file to api",
+        "summary": "Stores a  file",
+        "description": "This Routes is used to upload files"
+      },
+      "x-oad-type": "operation"
+    }
+  },
+  "components": {
+    "schemas": {
+      "StatusMessage": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "Status": {
+            "type": "string"
+          },
+          "Time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Version": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "description": "Customer Credentials used to secure route access",
+        "scheme": "basic"
+      },
+      "Development": {
+        "type": "apiKey",
+        "description": "This Api Key is for accessing developer routes",
+        "name": "token",
+        "in": "header"
+      }
+    }
+  }
+}

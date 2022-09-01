@@ -1,0 +1,6 @@
+dist
+node_modules
+.idea
+packackage-lock.json
+!.env
+!.gitlab-ci.yml
